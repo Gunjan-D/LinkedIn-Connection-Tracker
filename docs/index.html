@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Track your LinkedIn connection requests and stay within the 100/week limit with our free Chrome extension">
+    <title>LinkedIn Connection Request Tracker - Free Chrome Extension</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #00897b 0%, #00695c 100%);
+            color: white;
+            padding: 100px 20px 120px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            opacity: 0.4;
+        }
+
+        header > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        header h1 {
+            font-size: 56px;
+            margin-bottom: 20px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            animation: fadeInUp 0.8s ease-out;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        header p {
+            font-size: 24px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 8px 24px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,0.3);
+            animation: fadeInUp 0.8s ease-out 0.1s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #00897b;
+            padding: 18px 45px;
+            text-decoration: none;
+            border-radius: 35px;
+            font-size: 18px;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 10px;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(0, 137, 123, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .cta-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+        }
+
+        .cta-button.secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 20px;
+            background: #f8f9fa;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: #00897b;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .features h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #00897b, #00695c);
+            margin: 20px auto 50px;
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0, 137, 123, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00897b, #00695c);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 40px rgba(0, 137, 123, 0.15);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            font-size: 64px;
+            margin-bottom: 25px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+
+        .feature-card:hover .feature-icon {
+            animation: pulse 0.6s ease-in-out;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #00897b;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 80px 20px;
+        }
+
+        .how-it-works h2 {
+            text-align: center;
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: #00897b;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .how-it-works h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #00897b, #00695c);
+            margin: 20px auto 50px;
+            border-radius: 2px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .step {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #00897b, #00695c);
+            color: white;
+            border-radius: 50%;
+            line-height: 70px;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(0, 137, 123, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .step:hover .step-number {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .step h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .step p {
+            color: #666;
+        }
+
+        /* Benefits */
+        .benefits {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #00897b 0%, #00695c 100%);
+            color: white;
+        }
+
+        .benefits h2 {
+            text-align: center;
+            font-size: 42px;
+            margin-bottom: 60px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .benefits-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            padding: 25px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+
+        .benefit-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(10px);
+        }
+
+        .benefit-item .icon {
+            font-size: 40px;
+            margin-right: 25px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            min-width: 40px;
+        }
+
+        .benefit-item h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .benefit-item p {
+            opacity: 0.9;
+        }
+
+        /* Installation */
+        .installation {
+            padding: 80px 20px;
+            background: #f8f9fa;
+        }
+
+        .installation h2 {
+            text-align: center;
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: #00897b;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .installation h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #00897b, #00695c);
+            margin: 20px auto 30px;
+            border-radius: 2px;
+        }
+
+        .install-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .install-card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            border: 2px solid rgba(0, 137, 123, 0.1);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .install-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 137, 123, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .install-card h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #00897b;
+        }
+
+        .install-card ol {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .install-card li {
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .install-card code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Screenshot */
+        .screenshot {
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .screenshot h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: #00897b;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .screenshot h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #00897b, #00695c);
+            margin: 20px auto 30px;
+            border-radius: 2px;
+        }
+
+        .screenshot-placeholder {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 100px 40px;
+            border: 3px dashed #00897b;
+        }
+
+        .screenshot-placeholder p {
+            color: #666;
+            font-size: 18px;
+        }
+
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        footer p {
+            margin-bottom: 10px;
+        }
+
+        footer a {
+            color: #00897b;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 36px;
+            }
+
+            header p {
+                font-size: 18px;
+            }
+
+            .features h2, .how-it-works h2, .benefits h2, .installation h2, .screenshot h2 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div style="display: inline-block; background: rgba(255,255,255,0.15); padding: 8px 20px; border-radius: 20px; margin-bottom: 20px; font-size: 14px; font-weight: 600; letter-spacing: 1px;">
+            ✨ SMART LINKEDIN AUTOMATION
+        </div>
+        <h1> LinkedIn Connection Request Tracker</h1>
+        <p style="font-size: 28px; font-weight: 300; margin-bottom: 15px;">Never exceed LinkedIn's 100 connection request/week limit again!</p>
+        <p style="font-size: 18px; opacity: 0.9; margin-bottom: 35px;">
+            Track connections • Stay compliant • Grow strategically • 100% Free Forever
+        </p>
+        <div>
+            <a href="linkedin-request-tracker-v1.0.0.zip" download="linkedin-request-tracker-v1.0.0.zip" class="cta-button" style="box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                <span style="font-size: 20px;"></span> Download Free Extension
+            </a>
+            <a href="#how-it-works" class="cta-button secondary">Learn How It Works →</a>
+        </div>
+        <p style="margin-top: 25px; font-size: 14px; opacity: 0.8;">
+        </p>
+    </header>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Install Extension</h3>
+                    <p>Add the extension to Chrome in just one click. Quick and easy setup.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Open LinkedIn</h3>
+                    <p>Navigate to LinkedIn.com. The counter appears automatically in the bottom-right corner.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Send Connections</h3>
+                    <p>Click "Connect" buttons as usual. The counter updates automatically with each request.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Stay Within Limits</h3>
+                    <p>Watch the progress bar and alerts. Stop before hitting 100 to avoid restrictions!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section class="benefits">
+        <div class="container">
+            <h2>Amazing Benefits</h2>
+            <div class="benefits-list">
+                <div class="benefit-item">
+                    <div class="icon">🛡️</div>
+                    <div>
+                        <h3>Avoid Account Restrictions</h3>
+                        <p>LinkedIn limits non-premium users to 100 connection requests per week. Exceeding this can lead to restrictions. Stay safe!</p>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <div class="icon">📈</div>
+                    <div>
+                        <h3>Grow Your Network Strategically</h3>
+                        <p>Know exactly how many requests you can send. Plan your networking activities throughout the week.</p>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <div class="icon">⏰</div>
+                    <div>
+                        <h3>Save Time</h3>
+                        <p>No more manually counting or checking LinkedIn's invitation manager. Everything is automatic.</p>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <div class="icon">💰</div>
+                    <div>
+                        <h3>Free Alternative to Premium</h3>
+                        <p>Get the tracking benefits without paying for LinkedIn Premium. Completely free, forever.</p>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <div class="icon">📱</div>
+                    <div>
+                        <h3>Works Seamlessly</h3>
+                        <p>Integrates directly into LinkedIn. No separate app or dashboard to manage.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation -->
+    <section class="installation" id="installation">
+        <div class="container">
+            <h2>Download & Install</h2>
+            <p style="text-align: center; color: #666; font-size: 18px; margin-bottom: 40px;">
+                Choose your preferred installation method
+            </p>
+            
+            <div class="install-options">
+                <!-- Chrome Web Store -->
+                <div class="install-card">
+                    <h3>🌐 Chrome Web Store (Recommended)</h3>
+                    <ol>
+                        <li>Click the "Add to Chrome" button below</li>
+                        <li>Click "Add Extension" in the popup</li>
+                        <li>Go to LinkedIn.com</li>
+                        <li>Start tracking!</li>
+                    </ol>
+                    <a href="#" class="cta-button" style="display: block; text-align: center;">
+                        Add to Chrome (Coming Soon)
+                    </a>
+                    <p style="text-align: center; margin-top: 15px; font-size: 14px; color: #999;">
+                        Currently in review process
+                    </p>
+                </div>
+
+                <!-- Manual Install -->
+                <div class="install-card">
+                    <h3>💻 Manual Installation</h3>
+                    <ol>
+                        <li>Download the extension ZIP file</li>
+                        <li>Extract to a folder</li>
+                        <li>Open <code>chrome://extensions/</code></li>
+                        <li>Enable "Developer mode" (top-right)</li>
+                        <li>Click "Load unpacked"</li>
+                        <li>Select the extracted folder</li>
+                        <li>Go to LinkedIn and enjoy!</li>
+                    </ol>
+                    <a href="https://github.com/yourusername/linkedin-tracker/releases" class="cta-button" style="display: block; text-align: center; background: #2c3e50; color: white;">
+                        Download ZIP (GitHub)
+                    </a>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px; padding: 30px; background: white; border-radius: 12px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: #d63384; margin-bottom: 15px;">Open Source</h3>
+                <p style="color: #666; margin-bottom: 20px;">
+                    This extension is completely open source! View the code, contribute, or report issues on GitHub.
+                </p>
+                <a href="https://github.com/yourusername/linkedin-tracker" class="cta-button" style="background: #2c3e50; color: white;">
+                    View on GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshot -->
+    <section class="screenshot">
+        <div class="container">
+            <h2>See It In Action</h2>
+            <div class="screenshot-placeholder">
+                <p>📸 Screenshot of the extension in action will be added here</p>
+                <p style="margin-top: 20px; font-size: 14px;">
+                    Showing the beautiful pink widget on LinkedIn with live counter
+                </p>
+            </div>
+        </div>
+    </section>
+ <!-- Features -->
+    <section class="features">
+        <div class="container">
+            <h2>Why You Need This Extension</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Real-Time Tracking</h3>
+                    <p>See your connection request count update live as you send invitations. Know exactly where you stand at all times.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Smart Alerts</h3>
+                    <p>Get color-coded warnings when approaching your weekly limit. Green, orange, and red indicators keep you informed.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>7-Day Rolling Window</h3>
+                    <p>Automatically tracks requests from the last 7 days. Old requests are cleaned up automatically.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 LinkedIn Connection Request Tracker</p>
+            <p>Made with 💗 by <a href="#">Gunjan Deshpande</a></p>
+            <p style="margin-top: 20px;">
+                <a href="#">Privacy Policy</a> | 
+                <a href="#">Terms of Use</a> | 
+                <a href="https://github.com/Gunjan-D">GitHub</a> | 
+                <a href="https://www.linkedin.com/in/gunjan-deshpande/">LinkedIn</a>
+            </p>
+            <p style="margin-top: 20px; font-size: 14px; opacity: 0.7;">
+                Not affiliated with LinkedIn Corporation. This is an independent project.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Simple Analytics (Optional) -->
+    <script>
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

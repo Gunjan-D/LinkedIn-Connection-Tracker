@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Icon Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            margin: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>LinkedIn Tracker Icon Generator</h1>
+    <p>Click the button below to generate and download all three icon sizes</p>
+    <button onclick="generateIcons()">Generate Icons</button>
+    <div id="canvases"></div>
+
+    <script>
+        function generateIcons() {
+            const sizes = [16, 48, 128];
+            const container = document.getElementById('canvases');
+            container.innerHTML = '';
+
+            sizes.forEach(size => {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                // Background gradient (LinkedIn blue)
+                const gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#0a66c2');
+                gradient.addColorStop(1, '#004182');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, size, size);
+
+                // White circle background
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(size / 2, size / 2, size * 0.35, 0, 2 * Math.PI);
+                ctx.fill();
+
+                // Number "100" or counter icon
+                ctx.fillStyle = '#0a66c2';
+                ctx.font = `bold ${size * 0.3}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                if (size >= 48) {
+                    ctx.fillText('100', size / 2, size / 2);
+                } else {
+                    // For small icon, just use a simple design
+                    ctx.fillRect(size * 0.35, size * 0.4, size * 0.3, size * 0.05);
+                    ctx.fillRect(size * 0.35, size * 0.5, size * 0.3, size * 0.05);
+                    ctx.fillRect(size * 0.35, size * 0.6, size * 0.3, size * 0.05);
+                }
+
+                container.appendChild(canvas);
+
+                // Download link
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `icon${size}.png`;
+                    link.textContent = `Download icon${size}.png`;
+                    link.style.display = 'block';
+                    link.style.margin = '10px';
+                    container.appendChild(link);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

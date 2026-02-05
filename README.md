@@ -2,6 +2,20 @@
 
 A Chrome extension that helps you track your LinkedIn connection requests and stay within the weekly limit of 100 requests (for non-premium users).
 
+<div align="center">
+
+[![Download Extension](https://img.shields.io/badge/Download-Chrome_Extension-00897b?style=for-the-badge&logo=googlechrome&logoColor=white)](https://github.com/Gunjan-D/LinkedIn-Connection-Tracker/raw/main/linkedin-request-tracker-v1.0.0.zip)
+[![Website](https://img.shields.io/badge/Visit-Website-0a66c2?style=for-the-badge&logo=linkedin&logoColor=white)](https://gunjan-d.github.io/LinkedIn-Connection-Tracker/)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Gunjan-D/LinkedIn-Connection-Tracker)
+
+</div>
+
+---
+
+## 🚀 Quick Start
+
+**[📥 Download Extension](https://github.com/Gunjan-D/LinkedIn-Connection-Tracker/raw/main/linkedin-request-tracker-v1.0.0.zip)** | **[🌐 Visit Website](https://gunjan-d.github.io/LinkedIn-Connection-Tracker/)**
+
 ## Features
 
 - **Real-time Counter**: Displays a floating widget on LinkedIn showing your current connection request count

@@ -12,7 +12,7 @@ A Chrome extension that helps you track your LinkedIn connection requests and st
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 **[📥 Download Extension](https://github.com/Gunjan-D/LinkedIn-Connection-Tracker/raw/main/linkedin-request-tracker-v1.0.0.zip)** | **[🌐 Visit Website](https://gunjan-d.github.io/LinkedIn-Connection-Tracker/)**
 
